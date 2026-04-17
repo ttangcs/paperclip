@@ -1,0 +1,26 @@
+[variables]
+NIXPACKS_NODE_VERSION = "20"
+NODE_ENV = "production"
+HOST = "0.0.0.0"
+PORT = "3100"
+SERVE_UI = "true"
+PAPERCLIP_HOME = "/app/data"
+PAPERCLIP_INSTANCE_ID = "default"
+PAPERCLIP_DEPLOYMENT_MODE = "authenticated"
+PAPERCLIP_DEPLOYMENT_EXPOSURE = "private"
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm", "python3", "git", "openssh", "ripgrep", "jq"]
+
+[phases.install]
+cmds = ["corepack enable", "pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = [
+  "pnpm --filter @paperclipai/ui build",
+  "pnpm --filter @paperclipai/plugin-sdk build",
+  "pnpm --filter @paperclipai/server build"
+]
+
+[start]
+cmd = "mkdir -p /app/data && pnpm --filter @paperclipai/server start"
